@@ -46,7 +46,7 @@
   //
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
-  _.each = function(collection, iterator {
+  _.each = function(collection, iterator) {
     for (var i = 0; i < collection.length; i++) {
       iterator(collection[i]);
     }
@@ -71,27 +71,27 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
-    var arr = [];
-    _.each(collection, test(item)) {
+    var result = [];
+    _.each(collection, function(item) {
       if (test(item) === true) {
-        arr.push(item);
-      }
-    }
-    return arr;
+        result.push(item);
+      };
+    });
+    return result;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-    var arr = [];
-    _.each(collection, test(item)) {
+    var result = [];
+    _.each(collection, function(item) {
       if (test(item) === false) {
-        arr.push(item);
-      }
-    }
-    return arr;
-  };
+        result.push(item);
+      };
+    });
+    return result;
+ };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
@@ -116,9 +116,10 @@
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
     var result = [];
-    for (var i = 0; i < collection.length; i++) {
-      result.push(iterator(collection[i]));
-    }
+    _.each(collection, function(item) {
+      result.push(iterator(item)) 
+      });
+    return result;
   };
 
   /*
