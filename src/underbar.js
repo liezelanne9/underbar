@@ -38,8 +38,13 @@
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
-    return n === undefined ? array[0] : array.slice(n);
+    if (n === 0) {
+      return [];
+    }
+    return n === undefined ? array[array.length - 1] : array.slice(-n);
   };
+
+// 
 
   // Call iterator(value, key, collection) for each element of collection.
   // Accepts both arrays and objects.
@@ -47,9 +52,16 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-    for (var i = 0; i < collection.length; i++) {
-      iterator(collection[i]);
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++) {
+      iterator(collection[i], i, collection);
+      } 
+    } else {
+      for (var key in collection) {
+        iterator(collection[key], key, collection)
+      }
     }
+    
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -95,19 +107,30 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-      var obj = {};
+    if (isSorted) {
       var result = [];
+      for (var j = 0; j < array.length; j++) {
+        result.push(array[j]);
+        if (array[j] >= array[j + 1]) {
+          return result;
+        };
+      };
+      return result;
+    } else {;
+      var result = [];
+      var obj = {}; 
       for (var i = 0; i < array.length; i++) {
-        if (!obj[array[i]]) {
+        if (obj[array[i]] === undefined) {
           obj[array[i]] = 1;
-        }
+        };
         obj[array[i]] += 1;
-      }
+      };
       for (var key in obj) {
-        result.push(key);
-      }
+        result.push(Number(key));
+      };
       return result;
     };
+  };
 
 
   // Return the results of applying an iterator to each element.
@@ -161,16 +184,14 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    var holder;
     if (accumulator === undefined) {
-      holder = 0;
-    } else {
-      holder = accumulator;
-    }
-    for (var i = 0; i < collection.length; i++) {
-      holder = iterator(holder, collection[i]);
-    }
-    return holder;
+      accumulator = collection[0];
+      collection = collection.slice(1);
+    };
+    _.each(collection, function(item, index) {
+      accumulator = iterator(accumulator, item, index);
+    }) 
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
